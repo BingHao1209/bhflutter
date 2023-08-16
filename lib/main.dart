@@ -87,12 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _triggerHapticFeedback() {
-    setState(() {
-      T="I am not connected to any network.";
-    });
-  }
-
   @override
   void initState(){
     checkConnection();
@@ -128,7 +122,6 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           checkConnection();
-
         },
         tooltip: 'Connection',
         child: const Text("Check"),
