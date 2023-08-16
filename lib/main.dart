@@ -128,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           checkConnection();
-          //_triggerHapticFeedback();
+
         },
         tooltip: 'Connection',
         child: const Text("Check"),
