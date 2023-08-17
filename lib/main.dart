@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void main(){
   runApp(const MyApp());
@@ -18,15 +19,17 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter 2 Home Page'),
+      home: MyHomePage(title: 'Flutter 2 Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
+  MyHomePage({super.key, required this.title});
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final String title;
+
+
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -86,6 +89,19 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> createNotificationChannels() async {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'channel_id',
+      'Channel Name',
+      importance: Importance.high,
+      playSound: true,
+    );
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
+  }
+
+
   @override
   void initState(){
     checkConnection();
@@ -102,21 +118,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
         title: Text(widget.title),
       ),
+      // body: Center(
+      //   child: Column(
+      //
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: <Widget>[
+      //       Text(
+      //         'Active Connection? $_activeConnection',
+      //         style: const TextStyle(fontSize: 20),
+      //       ),
+      //       const Divider(),
+      //       Text(T,
+      //         style: const TextStyle(fontSize: 20),),
+      //     ],
+      //   ),
+      //
+      // ),
       body: Center(
-        child: Column(
-
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Active Connection? $_activeConnection',
-              style: const TextStyle(fontSize: 20),
-            ),
-            const Divider(),
-            Text(T,
-              style: const TextStyle(fontSize: 20),),
-          ],
-        ),
-
+          child: ElevatedButton(
+            onPressed: () async{
+              await createNotificationChannels();
+            },
+            child: const Text('Create Notification Channels'),
+          )
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
@@ -127,4 +151,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+
+  Widget build2(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Notifications'),
+      ),
+      body: Center(
+          child: ElevatedButton(
+            onPressed: () async{
+              await createNotificationChannels();
+            }, child: const Text('Create Notification Channels'),
+          )
+      ),
+    );
+  }
+
 }
