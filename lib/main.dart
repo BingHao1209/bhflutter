@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-// import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 void main(){
   runApp(const MyApp());
