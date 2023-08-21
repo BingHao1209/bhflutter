@@ -77,12 +77,14 @@ class _SettingsTabState extends State<SettingsTab> {
               if (value) {
                 await setPermission('Notification').then((result) {
                   if(!result){
-                    setState(() => switchPushNotification = result);
+                    setState(() => switchPushNotification = false);
+                  } else{
+                    setState(() => switchPushNotification = true);
                   }
                 });
               } else {
                 _showPrompt(context);
-                setState(() => switchPushNotification = value);
+                setState(() => switchPushNotification = false);
               }
             },
           ),
@@ -95,12 +97,14 @@ class _SettingsTabState extends State<SettingsTab> {
               if (value) {
                 await setPermission('Location').then((result) {
                   if(!result){
-                    setState(() => switchLocation = !value);
+                    setState(() => switchLocation = false);
+                  } else{
+                    setState(() => switchLocation = true);
                   }
                 });
               } else {
                 _showPrompt(context);
-                setState(() => switchLocation = value);
+                setState(() => switchLocation = false);
               }
             }),
         ),
