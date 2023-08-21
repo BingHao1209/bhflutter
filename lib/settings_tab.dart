@@ -34,6 +34,8 @@ class _SettingsTabState extends State<SettingsTab> {
 
     if (status.isGranted) {
       return true;
+    } else if(status.isDenied){
+      return false;
     }
     return false;
   }
@@ -73,16 +75,15 @@ class _SettingsTabState extends State<SettingsTab> {
             value: switchPushNotification,
             onChanged: (value) async {
               if (value) {
-                // await setPermission('Notification').then((result) {
-                //   if(!result){
-                //     setState(() => switchPushNotification = result);
-                //   }
-                // });
-                openAppSettings();
+                await setPermission('Notification').then((result) {
+                  if(!result){
+                    setState(() => switchPushNotification = result);
+                  }
+                });
               } else {
                 _showPrompt(context);
+                setState(() => switchPushNotification = value);
               }
-              setState(() => switchPushNotification = value);
             },
           ),
         ),
@@ -92,16 +93,15 @@ class _SettingsTabState extends State<SettingsTab> {
             value: switchLocation,
             onChanged: (value) async{
               if (value) {
-                // await setPermission('Location').then((result) {
-                //   if(!result){
-                //     setState(() => switchLocation = result);
-                //   }
-                // });
-                openAppSettings();
+                await setPermission('Location').then((result) {
+                  if(!result){
+                    setState(() => switchLocation = !value);
+                  }
+                });
               } else {
                 _showPrompt(context);
+                setState(() => switchLocation = value);
               }
-              setState(() => switchLocation = value);
             }),
         ),
         ListTile(
