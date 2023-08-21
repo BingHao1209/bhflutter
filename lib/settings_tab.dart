@@ -24,7 +24,8 @@ class _SettingsTabState extends State<SettingsTab> {
           title: const Text('Enable Push Notifications'),
           trailing: Switch.adaptive(
             value: switchPushNotification,
-            onChanged: (value) => setState(() => switchPushNotification = value),
+            onChanged: (value) =>
+                setState(() => switchPushNotification = value),
           ),
         ),
         ListTile(
@@ -54,43 +55,43 @@ class _SettingsTabState extends State<SettingsTab> {
 
   @override
   Widget build(BuildContext context) {
-    int curIndex=1;
+    int curIndex = 1;
     return Scaffold(
       appBar: AppBar(
         title: const Text(SettingsTab.title),
       ),
       body: _buildList(),
-      bottomNavigationBar:  BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings'
-          ),
+              icon: Icon(Icons.settings), label: 'Settings'),
         ],
         currentIndex: curIndex,
-        onTap: (int index){
+        onTap: (int index) {
           setState(() {
-            curIndex=index;
+            curIndex = index;
           });
-          switch(index){
+          switch (index) {
             case 0:
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (BuildContext context){
+                  builder: (BuildContext context) {
                     return const MyApp();
-                  },),
+                  },
+                ),
               );
               break;
             case 1:
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (BuildContext context){
+                  builder: (BuildContext context) {
                     return const SettingsTab();
-                  },),
+                  },
+                ),
               );
               break;
             default:
