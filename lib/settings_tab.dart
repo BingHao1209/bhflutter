@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingsTab extends StatefulWidget {
   static const title = 'Settings';
@@ -15,6 +15,54 @@ class _SettingsTabState extends State<SettingsTab> {
   var switchStatus = false;
   var switchGeofence = false;
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _buildList(),
+    );
+  }
+
+  Future<bool> setPermission(var permission) async {
+    late PermissionStatus status;
+    if (permission == 'Notification') {
+      status = await Permission.notification.request();
+    } else if (permission == 'Location') {
+      status = await Permission.location.request();
+    } else{
+      return false;
+    }
+
+    if (status.isGranted) {
+      return true;
+    }
+    return false;
+  }
+
+  void _showPrompt(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Set Permissions'),
+          content:
+              const Text('Please disable push notifications in the settings.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text('Open App Settings'),
+            ),
+          ],
+        );
+      },
+    ).then((result) {
+      if (result != null && result) {
+        openAppSettings();
+      }
+    });
+  }
+
   Widget _buildList() {
     return ListView(
       children: [
@@ -23,39 +71,56 @@ class _SettingsTabState extends State<SettingsTab> {
           title: const Text('Enable Push Notifications'),
           trailing: Switch.adaptive(
             value: switchPushNotification,
-            onChanged: (value) =>
-                setState(() => switchPushNotification = value),
+            onChanged: (value) async {
+              if (value) {
+                // await setPermission('Notification').then((result) {
+                //   if(!result){
+                //     setState(() => switchPushNotification = result);
+                //   }
+                // });
+                openAppSettings();
+              } else {
+                _showPrompt(context);
+              }
+              setState(() => switchPushNotification = value);
+            },
           ),
         ),
         ListTile(
           title: const Text('Allow Location Tracking'),
           trailing: Switch.adaptive(
             value: switchLocation,
-            onChanged: (value) => setState(() => switchLocation = value),
-          ),
+            onChanged: (value) async{
+              if (value) {
+                // await setPermission('Location').then((result) {
+                //   if(!result){
+                //     setState(() => switchLocation = result);
+                //   }
+                // });
+                openAppSettings();
+              } else {
+                _showPrompt(context);
+              }
+              setState(() => switchLocation = value);
+            }),
         ),
         ListTile(
           title: const Text('Show Status Updates'),
           trailing: Switch.adaptive(
-            value: switchStatus,
-            onChanged: (value) => setState(() => switchStatus = value),
-          ),
+              value: switchStatus,
+              onChanged: (value) {
+                setState(() => switchStatus = value);
+              }),
         ),
         ListTile(
           title: const Text('Allow Geofence'),
           trailing: Switch.adaptive(
-            value: switchGeofence,
-            onChanged: (value) => setState(() => switchGeofence = value),
-          ),
+              value: switchGeofence,
+              onChanged: (value) {
+                setState(() => switchGeofence = value);
+              }),
         ),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildList(),
     );
   }
 }

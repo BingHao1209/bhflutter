@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'wifi.dart';
 import 'settings_tab.dart';
+import 'package:vibration/vibration.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,14 +56,16 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.wifi),
-            label: 'Wifi',
+              icon: Icon(Icons.wifi),
+              label: 'Wifi',
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Settings'),
+              icon: Icon(Icons.settings),
+              label: 'Settings'),
         ],
         currentIndex: curIndex,
         onTap: (int index) {
+          Vibration.vibrate(duration: 50);
           setState(() {
             curIndex = index;
           });
