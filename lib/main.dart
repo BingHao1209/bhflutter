@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/material.dart';
+import 'settings_tab.dart';
 
-void main(){
+void main() {
   runApp(const MyApp());
 }
 
@@ -13,97 +15,82 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter 2 Home Page',
       theme: ThemeData(
-
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent),
         useMaterial3: true,
       ),
-      home: MyHomePage(title: 'Flutter 2 Home Page'),
+      home: const MyHomePage(title: 'Flutter 2 Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({super.key, required this.title});
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  const MyHomePage({super.key, required this.title});
+
   final String title;
-
-
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   bool _activeConnection = false;
-  String T="";
-  Future checkConnection() async{
-    try{
+  String T = "";
+  int curIndex=0;
+  Future checkConnection() async {
+    try {
       final connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.mobile) {
         setState(() {
-          _activeConnection=true;
-          T="I am connected to a mobile network.";
+          _activeConnection = true;
+          T = "I am connected to a mobile network.";
         });
       } else if (connectivityResult == ConnectivityResult.bluetooth) {
         setState(() {
-          _activeConnection=true;
-          T="I am connected to a bluetooth.";
+          _activeConnection = true;
+          T = "I am connected to a bluetooth.";
         });
       } else if (connectivityResult == ConnectivityResult.other) {
         setState(() {
-          _activeConnection=true;
-          T="I am connected to a network which is not in the above mentioned networks.";
+          _activeConnection = true;
+          T = "I am connected to a network which is not in the above mentioned networks.";
         });
       } else if (connectivityResult == ConnectivityResult.wifi) {
         setState(() {
-          _activeConnection=true;
-          T="I am connected to a wifi network.";
+          _activeConnection = true;
+          T = "I am connected to a wifi network.";
         });
       } else if (connectivityResult == ConnectivityResult.ethernet) {
         setState(() {
-          _activeConnection=true;
-          T="I am connected to a ethernet network.";
+          _activeConnection = true;
+          T = "I am connected to a ethernet network.";
         });
       } else if (connectivityResult == ConnectivityResult.vpn) {
         setState(() {
-          _activeConnection=true;
-          T="I am connected to a vpn network.";
+          _activeConnection = true;
+          T = "I am connected to a vpn network.";
         });
         // Note for iOS and macOS:
         // There is no separate network interface type for [vpn].
         // It returns [other] on any device (also simulator)
       } else if (connectivityResult == ConnectivityResult.none) {
         setState(() {
-          _activeConnection=false;
-          T="I am not connected to any network.";
+          _activeConnection = false;
+          T = "I am not connected to any network.";
         });
       }
-    } on SocketException catch(_){
+    } on SocketException catch (_) {
       setState(() {
-        _activeConnection=false;
-        T="Inactive";
+        _activeConnection = false;
+        T = "Inactive";
       });
     }
   }
 
-  Future<void> createNotificationChannels() async {
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'channel_id',
-      'Channel Name',
-      importance: Importance.high,
-      playSound: true,
-    );
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
-  }
-
-
   @override
-  void initState(){
+  void initState() {
     checkConnection();
     super.initState();
   }
@@ -113,59 +100,63 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
         title: Text(widget.title),
       ),
-      // body: Center(
-      //   child: Column(
-      //
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: <Widget>[
-      //       Text(
-      //         'Active Connection? $_activeConnection',
-      //         style: const TextStyle(fontSize: 20),
-      //       ),
-      //       const Divider(),
-      //       Text(T,
-      //         style: const TextStyle(fontSize: 20),),
-      //     ],
-      //   ),
-      //
-      // ),
       body: Center(
-          child: ElevatedButton(
-            onPressed: () async{
-              await createNotificationChannels();
-            },
-            child: const Text('Create Notification Channels'),
-          )
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Active Connection? $_activeConnection',
+              style: const TextStyle(fontSize: 20),
+            ),
+            const Divider(),
+            Text(
+              T,
+              style: const TextStyle(fontSize: 20),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
+          Vibrate.vibrate();
           checkConnection();
         },
         tooltip: 'Connection',
         child: const Text("Check"),
       ),
+      bottomNavigationBar:  BottomNavigationBar(
+        items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.settings),
+                    label: 'Settings'
+                ),
+              ],
+        currentIndex: curIndex,
+        onTap: (int index){
+          setState(() {
+            curIndex=index;
+          });
+          switch(index){
+            case 1:
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (BuildContext context){
+                      return const SettingsTab();
+                    },),
+              );
+              break;
+            default:
+              break;
+          }
+        },
+      ),
     );
   }
-
-
-  Widget build2(BuildContext context){
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications'),
-      ),
-      body: Center(
-          child: ElevatedButton(
-            onPressed: () async{
-              await createNotificationChannels();
-            }, child: const Text('Create Notification Channels'),
-          )
-      ),
-    );
-  }
-
 }
