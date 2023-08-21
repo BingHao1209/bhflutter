@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:vibration/vibration.dart';
+import 'wifi.dart';
 import 'settings_tab.dart';
 
 void main() {
@@ -35,125 +33,39 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _activeConnection = false;
   String T = "";
-  int curIndex=0;
-  Future checkConnection() async {
-    try {
-      final connectivityResult = await (Connectivity().checkConnectivity());
-      if (connectivityResult == ConnectivityResult.mobile) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a mobile network.";
-        });
-      } else if (connectivityResult == ConnectivityResult.bluetooth) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a bluetooth.";
-        });
-      } else if (connectivityResult == ConnectivityResult.other) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a network which is not in the above mentioned networks.";
-        });
-      } else if (connectivityResult == ConnectivityResult.wifi) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a wifi network.";
-        });
-      } else if (connectivityResult == ConnectivityResult.ethernet) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a ethernet network.";
-        });
-      } else if (connectivityResult == ConnectivityResult.vpn) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a vpn network.";
-        });
-        // Note for iOS and macOS:
-        // There is no separate network interface type for [vpn].
-        // It returns [other] on any device (also simulator)
-      } else if (connectivityResult == ConnectivityResult.none) {
-        setState(() {
-          _activeConnection = false;
-          T = "I am not connected to any network.";
-        });
-      }
-    } on SocketException catch (_) {
-      setState(() {
-        _activeConnection = false;
-        T = "Inactive";
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    checkConnection();
-    super.initState();
-  }
+  int curIndex = 0;
+  final List<Widget> _bottomNav = <Widget>[
+    const CheckWifi(),
+    const SettingsTab(),
+  ];
+  final List<String> _appBarTitle = <String>[
+    CheckWifi.title,
+    SettingsTab.title,
+  ];
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text(_appBarTitle[curIndex]),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Active Connection? $_activeConnection',
-              style: const TextStyle(fontSize: 20),
-            ),
-            const Divider(),
-            Text(
-              T,
-              style: const TextStyle(fontSize: 20),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Vibration.vibrate(duration: 50);
-          checkConnection();
-        },
-        tooltip: 'Connection',
-        child: const Text("Check"),
-      ),
-      bottomNavigationBar:  BottomNavigationBar(
+      body: _bottomNav[curIndex],
+      bottomNavigationBar: BottomNavigationBar(
         items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.settings),
-                    label: 'Settings'
-                ),
-              ],
+          BottomNavigationBarItem(
+            icon: Icon(Icons.wifi),
+            label: 'Wifi',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: 'Settings'),
+        ],
         currentIndex: curIndex,
-        onTap: (int index){
+        onTap: (int index) {
           setState(() {
-            curIndex=index;
+            curIndex = index;
           });
-          switch(index){
-            case 1:
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (BuildContext context){
-                      return const SettingsTab();
-                    },),
-              );
-              break;
-            default:
-              break;
-          }
         },
       ),
     );

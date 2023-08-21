@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'main.dart';
 
 class SettingsTab extends StatefulWidget {
   static const title = 'Settings';
@@ -55,50 +54,8 @@ class _SettingsTabState extends State<SettingsTab> {
 
   @override
   Widget build(BuildContext context) {
-    int curIndex = 1;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(SettingsTab.title),
-      ),
       body: _buildList(),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Settings'),
-        ],
-        currentIndex: curIndex,
-        onTap: (int index) {
-          setState(() {
-            curIndex = index;
-          });
-          switch (index) {
-            case 0:
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return const MyApp();
-                  },
-                ),
-              );
-              break;
-            case 1:
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return const SettingsTab();
-                  },
-                ),
-              );
-              break;
-            default:
-              break;
-          }
-        },
-      ),
     );
   }
 }
