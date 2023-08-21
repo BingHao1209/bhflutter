@@ -1,17 +1,9 @@
-// Copyright 2020 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'main.dart';
 
 class SettingsTab extends StatefulWidget {
   static const title = 'Settings';
-  static const androidIcon = Icon(Icons.settings);
-  static const iosIcon = Icon(CupertinoIcons.gear);
-
   const SettingsTab({super.key});
 
   @override
@@ -19,67 +11,41 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<SettingsTab> {
-  var switch1 = false;
-  var switch2 = true;
-  var switch3 = true;
-  var switch4 = true;
-  var switch5 = true;
-  var switch6 = false;
-  var switch7 = true;
-
+  var switchPushNotification = false;
+  var switchLocation = false;
+  var switchStatus = false;
+  var switchGeofence = false;
 
   Widget _buildList() {
     return ListView(
       children: [
         const Padding(padding: EdgeInsets.only(top: 24)),
         ListTile(
-          title: const Text('Send me marketing emails'),
-          // The Material switch has a platform adaptive constructor.
+          title: const Text('Enable Push Notifications'),
           trailing: Switch.adaptive(
-            value: switch1,
-            onChanged: (value) => setState(() => switch1 = value),
+            value: switchPushNotification,
+            onChanged: (value) => setState(() => switchPushNotification = value),
           ),
         ),
         ListTile(
-          title: const Text('Enable notifications'),
+          title: const Text('Allow Location Tracking'),
           trailing: Switch.adaptive(
-            value: switch2,
-            onChanged: (value) => setState(() => switch2 = value),
+            value: switchLocation,
+            onChanged: (value) => setState(() => switchLocation = value),
           ),
         ),
         ListTile(
-          title: const Text('Remind me to rate this app'),
+          title: const Text('Show Status Updates'),
           trailing: Switch.adaptive(
-            value: switch3,
-            onChanged: (value) => setState(() => switch3 = value),
+            value: switchStatus,
+            onChanged: (value) => setState(() => switchStatus = value),
           ),
         ),
         ListTile(
-          title: const Text('Background song refresh'),
+          title: const Text('Allow Geofence'),
           trailing: Switch.adaptive(
-            value: switch4,
-            onChanged: (value) => setState(() => switch4 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Recommend me songs based on my location'),
-          trailing: Switch.adaptive(
-            value: switch5,
-            onChanged: (value) => setState(() => switch5 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Auto-transition playback to cast devices'),
-          trailing: Switch.adaptive(
-            value: switch6,
-            onChanged: (value) => setState(() => switch6 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Find friends from my contact list'),
-          trailing: Switch.adaptive(
-            value: switch7,
-            onChanged: (value) => setState(() => switch7 = value),
+            value: switchGeofence,
+            onChanged: (value) => setState(() => switchGeofence = value),
           ),
         ),
       ],
