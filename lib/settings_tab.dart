@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-class SettingsTab extends StatefulWidget {
+import 'package:shared_preferences/shared_preferences.dart';
+ class SettingsTab extends StatefulWidget {
   static const title = 'Settings';
   const SettingsTab({super.key});
 
@@ -10,16 +10,29 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<SettingsTab> {
-  var switchPushNotification = false;
-  var switchLocation = false;
-  var switchStatus = false;
-  var switchGeofence = false;
+  bool switchPushNotification = false;
+  bool switchLocation = false;
+  bool switchStatus = false;
+  bool switchGeofence = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildList(),
     );
+  }
+
+  Future<void> saveSettings() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('pushNotification',switchPushNotification);
+    await prefs.setBool('location',switchLocation);
+    await prefs.setBool('status',switchStatus);
+    await prefs.setBool('geofence',switchGeofence);
+  }
+
+  Future<bool> loadSettings(var permission) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(permission)??false;
   }
 
   Future<bool> setPermission(var permission) async {
@@ -34,6 +47,8 @@ class _SettingsTabState extends State<SettingsTab> {
 
     if (status.isGranted) {
       return true;
+    } else if(status.isPermanentlyDenied){
+      return false;
     } else if(status.isDenied){
       return false;
     }
@@ -45,9 +60,9 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Set Permissions'),
+          title: const Text('Permissions Denied'),
           content:
-              const Text('Please disable push notifications in the settings.'),
+              const Text('To enable or disable permissions, please go to app settings.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -72,17 +87,13 @@ class _SettingsTabState extends State<SettingsTab> {
         ListTile(
           title: const Text('Enable Push Notifications'),
           trailing: Switch.adaptive(
-            value: switchPushNotification,
+            value: true,
             onChanged: (value) async {
               if (value) {
                 await setPermission('Notification').then((result) {
-                  if(!result){
-                    setState(() => switchPushNotification = false);
-                  } else{
-                    setState(() => switchPushNotification = true);
-                  }
+                    setState(() => switchPushNotification = result);
                 });
-              } else {
+              } else{
                 _showPrompt(context);
                 setState(() => switchPushNotification = false);
               }
@@ -123,6 +134,17 @@ class _SettingsTabState extends State<SettingsTab> {
               onChanged: (value) {
                 setState(() => switchGeofence = value);
               }),
+        ),
+        ListTile(
+          title: const Text('Open App Settings'),
+          trailing: TextButton(
+              onPressed: () => openAppSettings(), 
+              child: const Text("Open Settings"),)
+              // Switch.adaptive(
+              // value: switchGeofence,
+              // onChanged: (value) {
+              //   setState(() => switchGeofence = value);
+              // }),
         ),
       ],
     );

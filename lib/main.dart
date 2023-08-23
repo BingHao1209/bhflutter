@@ -53,24 +53,24 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(_appBarTitle[curIndex]),
       ),
       body: _bottomNav[curIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.wifi),
-              label: 'Wifi',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings'),
-        ],
-        currentIndex: curIndex,
-        onTap: (int index) {
-          Vibration.vibrate(duration: 50);
-          setState(() {
-            curIndex = index;
-          });
-        },
-      ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.wifi),
+                label: 'Wifi',
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: 'Settings'),
+          ],
+          currentIndex: curIndex,
+          onTap: (int index) {
+            Vibration.vibrate(duration: 50);
+            setState(() {
+              curIndex = index;
+            });
+          },
+        ),
     );
   }
 }
