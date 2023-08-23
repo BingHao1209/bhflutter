@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:vibration/vibration.dart';
 
 class CheckWifi extends StatefulWidget {
   const CheckWifi({super.key});
@@ -16,61 +17,68 @@ class _CheckWifiState extends State<CheckWifi> {
   bool _activeConnection = false;
   String T = "";
   int curIndex = 0;
+  StreamSubscription<ConnectivityResult>? subscription;
 
   Future checkConnection() async {
-    try {
-      final connectivityResult = await (Connectivity().checkConnectivity());
-      if (connectivityResult == ConnectivityResult.mobile) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a mobile network.";
-        });
-      } else if (connectivityResult == ConnectivityResult.bluetooth) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a bluetooth.";
-        });
-      } else if (connectivityResult == ConnectivityResult.other) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a network which is not in the above mentioned networks.";
-        });
-      } else if (connectivityResult == ConnectivityResult.wifi) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a wifi network.";
-        });
-      } else if (connectivityResult == ConnectivityResult.ethernet) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a ethernet network.";
-        });
-      } else if (connectivityResult == ConnectivityResult.vpn) {
-        setState(() {
-          _activeConnection = true;
-          T = "I am connected to a vpn network.";
-        });
-        // Note for iOS and macOS:
-        // There is no separate network interface type for [vpn].
-        // It returns [other] on any device (also simulator)
-      } else if (connectivityResult == ConnectivityResult.none) {
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      try {
+        if (result == ConnectivityResult.mobile) {
+          setState(() {
+            _activeConnection = true;
+            T = "I am connected to a mobile network.";
+          });
+        } else if (result == ConnectivityResult.bluetooth) {
+          setState(() {
+            _activeConnection = true;
+            T = "I am connected to a bluetooth.";
+          });
+        } else if (result == ConnectivityResult.other) {
+          setState(() {
+            _activeConnection = true;
+            T = "I am connected to a network which is not in the above mentioned networks.";
+          });
+        } else if (result == ConnectivityResult.wifi) {
+          setState(() {
+            _activeConnection = true;
+            T = "I am connected to a wifi network.";
+          });
+        } else if (result == ConnectivityResult.ethernet) {
+          setState(() {
+            _activeConnection = true;
+            T = "I am connected to a ethernet network.";
+          });
+        } else if (result == ConnectivityResult.vpn) {
+          setState(() {
+            _activeConnection = true;
+            T = "I am connected to a vpn network.";
+          });
+        } else if (result == ConnectivityResult.none) {
+          setState(() {
+            _activeConnection = false;
+            T = "I am not connected to any network.";
+          });
+        }
+      } on SocketException catch (_) {
         setState(() {
           _activeConnection = false;
-          T = "I am not connected to any network.";
+          T = "Inactive";
         });
       }
-    } on SocketException catch (_) {
-      setState(() {
-        _activeConnection = false;
-        T = "Inactive";
-      });
-    }
+    });
   }
 
   @override
   void initState() {
     checkConnection();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    subscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -91,14 +99,6 @@ class _CheckWifiState extends State<CheckWifi> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Vibration.vibrate(duration: 50);
-          checkConnection();
-        },
-        tooltip: 'Connection',
-        child: const Text("Check"),
       ),
     );
   }
