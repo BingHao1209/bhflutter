@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
- class SettingsTab extends StatefulWidget {
+
+
+class SettingsTab extends StatefulWidget {
   static const title = 'Settings';
   const SettingsTab({super.key});
 
@@ -14,6 +16,18 @@ class _SettingsTabState extends State<SettingsTab> {
   bool switchLocation = false;
   bool switchStatus = false;
   bool switchGeofence = false;
+
+  @override
+  void initState() {
+    loadSettings();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    saveSettings();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +44,14 @@ class _SettingsTabState extends State<SettingsTab> {
     await prefs.setBool('geofence',switchGeofence);
   }
 
-  Future<bool> loadSettings(var permission) async{
+  Future<void> loadSettings() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(permission)??false;
+    setState(() {
+    switchPushNotification =  prefs.getBool('pushNotification')??false;
+    switchLocation =  prefs.getBool('location')??false;
+    switchStatus =  prefs.getBool('status')??false;
+    switchGeofence =  prefs.getBool('geofence')??false;
+    });
   }
 
   Future<bool> setPermission(var permission) async {
@@ -87,7 +106,7 @@ class _SettingsTabState extends State<SettingsTab> {
         ListTile(
           title: const Text('Enable Push Notifications'),
           trailing: Switch.adaptive(
-            value: true,
+            value: switchPushNotification,
             onChanged: (value) async {
               if (value) {
                 await setPermission('Notification').then((result) {
@@ -107,11 +126,7 @@ class _SettingsTabState extends State<SettingsTab> {
             onChanged: (value) async{
               if (value) {
                 await setPermission('Location').then((result) {
-                  if(!result){
-                    setState(() => switchLocation = false);
-                  } else{
-                    setState(() => switchLocation = true);
-                  }
+                    setState(() => switchLocation = result);
                 });
               } else {
                 _showPrompt(context);
