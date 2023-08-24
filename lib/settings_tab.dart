@@ -66,10 +66,6 @@ class _SettingsTabState extends State<SettingsTab> {
 
     if (status.isGranted) {
       return true;
-    } else if(status.isPermanentlyDenied){
-      return false;
-    } else if(status.isDenied){
-      return false;
     }
     return false;
   }

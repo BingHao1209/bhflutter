@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "120130185076",
-    "project_id": "sql-intern",
-    "storage_bucket": "sql-intern.appspot.com"
+    "project_number": "626401180891",
+    "project_id": "sql-flutter-bh",
+    "storage_bucket": "sql-flutter-bh.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:120130185076:android:325ca29029ee72859f2e21",
+        "mobilesdk_app_id": "1:626401180891:android:d5af612026843d902060fe",
         "android_client_info": {
           "package_name": "com.example.flutter2"
         }
       },
       "oauth_client": [
         {
-          "client_id": "120130185076-8tlfuq7o27273glfpihls9it3sepam6g.apps.googleusercontent.com",
+          "client_id": "626401180891-rkpkg1anpei6atetm3mb2cqp1u4kf82p.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCkRc7R9nVb6H_myFCwIyIw4Fr9aCG_FmQ"
+          "current_key": "AIzaSyChVs7PZpbDOzHhCIgLGuTX48WUNF6d_58"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "120130185076-8tlfuq7o27273glfpihls9it3sepam6g.apps.googleusercontent.com",
+              "client_id": "626401180891-rkpkg1anpei6atetm3mb2cqp1u4kf82p.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

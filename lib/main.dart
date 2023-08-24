@@ -2,8 +2,21 @@ import 'package:flutter/material.dart';
 import 'wifi.dart';
 import 'settings_tab.dart';
 import 'package:vibration/vibration.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-void main() {
+import 'api/firebase.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('launch_background');
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   runApp(const MyApp());
 }
 
@@ -45,6 +58,28 @@ class _MyHomePageState extends State<MyHomePage> {
     SettingsTab.title,
   ];
 
+  Future<void> scheduleNotification() async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      '12345678', // Replace with your own channel ID
+      'BHFlutter22',
+      channelDescription: 'This is a BH test channel',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      'Fuck this noti',
+      'Sob Sob Sob',
+      platformChannelSpecifics,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,24 +88,24 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(_appBarTitle[curIndex]),
       ),
       body: _bottomNav[curIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.wifi),
-                label: 'Wifi',
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Settings'),
-          ],
-          currentIndex: curIndex,
-          onTap: (int index) {
-            Vibration.vibrate(duration: 50);
-            setState(() {
-              curIndex = index;
-            });
-          },
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.wifi),
+            label: 'Wifi',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: 'Settings'),
+        ],
+        currentIndex: curIndex,
+        onTap: (int index) async {
+          await scheduleNotification();
+          Vibration.vibrate(duration: 50);
+          setState(() {
+            curIndex = index;
+          });
+        },
+      ),
     );
   }
 }
