@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'wifi.dart';
 import 'settings_tab.dart';
-import 'package:vibration/vibration.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:vibration/vibration.dart';
 
 import 'api/firebase.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -13,6 +14,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FireBaseApi().initNotifcation();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('launch_background');
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   runApp(const MyApp());
 }
 
@@ -33,7 +43,7 @@ class MyApp extends StatelessWidget {
       routes:{
         CheckWifi.route:(context)=>const CheckWifi(),
         SettingsTab.route:(context)=>const SettingsTab(),
-      } 
+      }
     );
   }
 }
@@ -59,27 +69,27 @@ class _MyHomePageState extends State<MyHomePage> {
     SettingsTab.title,
   ];
 
-  // Future<void> scheduleNotification() async {
-  //   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  //       FlutterLocalNotificationsPlugin();
-  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-  //       AndroidNotificationDetails(
-  //     '12345678', // Replace with your own channel ID
-  //     'BHFlutter22',
-  //     channelDescription: 'This is a BH test channel',
-  //     importance: Importance.max,
-  //     priority: Priority.high,
-  //   );
-  //   const NotificationDetails platformChannelSpecifics =
-  //       NotificationDetails(android: androidPlatformChannelSpecifics);
+  Future<void> scheduleNotification() async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      '12345678', // Replace with your own channel ID
+      'BHFlutter22',
+      channelDescription: 'This is a BH test channel',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
 
-  //   await flutterLocalNotificationsPlugin.show(
-  //     0, // Notification ID
-  //     'Fuck this noti',
-  //     'Sob Sob Sob',
-  //     platformChannelSpecifics,
-  //   );
-  // }
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      'Fuck this noti',
+      'Sob Sob Sob',
+      platformChannelSpecifics,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         currentIndex: curIndex,
         onTap: (int index) async {
-          // await scheduleNotification();
+          await scheduleNotification();
           Vibration.vibrate(duration: 50);
           setState(() {
             curIndex = index;
