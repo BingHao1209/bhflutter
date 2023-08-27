@@ -5,7 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsTab extends StatefulWidget {
   static const title = 'Settings';
+  static const route = '/settings_tab';
   const SettingsTab({super.key});
+
 
   @override
   State<SettingsTab> createState() => _SettingsTabState();

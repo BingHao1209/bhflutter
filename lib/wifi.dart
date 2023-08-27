@@ -6,7 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class CheckWifi extends StatefulWidget {
   const CheckWifi({super.key});
-
+  static const route = '/wifi';
   static const title = 'Wifi Status';
 
   @override
