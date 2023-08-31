@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     await flutterLocalNotificationsPlugin.show(
       0, // Notification ID
-      'Fuck this noti',
+      'cry this noti',
       'Sob Sob Sob',
       platformChannelSpecifics,
     );
