@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 class SettingsTab extends StatefulWidget {
   static const title = 'Settings';
   static const route = '/settings_tab';
   const SettingsTab({super.key});
-
 
   @override
   State<SettingsTab> createState() => _SettingsTabState();
@@ -18,9 +18,38 @@ class _SettingsTabState extends State<SettingsTab> {
   bool switchLocation = false;
   bool switchStatus = false;
   bool switchGeofence = false;
+  final List<String> settings = [
+    "Push Notification",
+    "Location",
+    "Status",
+    "Geofence",
+  ];
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final AndroidNotificationDetails androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+    '23456789', // Replace with your own channel ID
+    'Settings',
+    channelDescription: 'This is a settings channel',
+    importance: Importance.max,
+    priority: Priority.high,
+    icon: '@mipmap/ic_launcher',
+  );
+  late final NotificationDetails platformChannelSpecifics;
+
+  Future<void> enableNotification(int settingId, bool state) async {
+    await flutterLocalNotificationsPlugin.show(
+      1, // Notification ID
+      'Activated',
+      'You have ${state?"enabled":"disabled"} ${settings[settingId]}',
+      platformChannelSpecifics,
+    );
+  }
+
+
 
   @override
   void initState() {
+    platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
     loadSettings();
     super.initState();
   }
@@ -114,6 +143,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 _showPrompt(context);
                 setState(() => switchPushNotification = false);
               }
+              enableNotification(0, switchPushNotification);
             },
           ),
         ),
@@ -130,6 +160,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 _showPrompt(context);
                 setState(() => switchLocation = false);
               }
+              enableNotification(1, switchLocation);
             }),
         ),
         ListTile(
@@ -138,6 +169,7 @@ class _SettingsTabState extends State<SettingsTab> {
               value: switchStatus,
               onChanged: (value) {
                 setState(() => switchStatus = value);
+                enableNotification(2, switchStatus);
               }),
         ),
         ListTile(
@@ -146,6 +178,7 @@ class _SettingsTabState extends State<SettingsTab> {
               value: switchGeofence,
               onChanged: (value) {
                 setState(() => switchGeofence = value);
+                enableNotification(3, switchGeofence);
               }),
         ),
         ListTile(
